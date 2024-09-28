@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Full Chat View</h1>
+
+<h3>Chat:</h3>
+<p>{{ chat_full }}</p>
+
+<h3>Sentiment Score:</h3>
+<p>Neg: {{ sentiment_score.neg }}<br/>
+Neu: {{ sentiment_score.neu }}<br/>
+Pos: {{ sentiment_score.pos }}</p>
+
+<h3>Detailed Analysis:</h3>
+<p>{{ detailed_analysis }}</p>
+
+<h3>Audit Requirement:</h3>
+<p>{{ audit_analysis }}</p>
+
+<p><strong>Uploaded On:</strong> {{ created_at }}</p>
+
+<a href="{% url 'home' %}">Back to Records</a>
+{% endblock %}

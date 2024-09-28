@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="col-md-8 offset-md-2">
+
+    {% if user.is_authenticated %}
+    <h1>Chat Records</h1>
+
+    {% if records %}
+    <!-- DataTable-enabled table -->
+    <table id="chatTable" class="display table table-striped table-bordered table-hover" style="width:100%">
+        <thead class="table-dark">
+            <tr>
+                <th>Chat Label</th>
+                <th>Chat Excerpt</th>
+                <th>Sentiment Score</th>
+                <th>Date Uploaded</th>
+                <th>View Chat</th>
+                <th>Update Chat</th>
+                <th>Delete Chat</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+            <tr>
+                <td>Chat-{{ forloop.counter }}</td>  <!-- Dynamic Chat Label -->
+                <td>{{ record.chat_file|truncatechars:60 }}</td>  <!-- Display a part of the chat (shortened) -->
+                <td>
+                    Neg: {{ record.sentiment_score.neg }}<br/>
+                    Neu: {{ record.sentiment_score.neu }}<br/>
+                    Pos: {{ record.sentiment_score.pos }}
+                </td>  
+                <td>{{ record.created_at|date:"F j, Y, g:i a" }}</td>  <!-- Formatting date -->
+                
+                <td><a href="{% url 'view_chat' record.id %}" class="btn btn-secondary">View</a></td>
+                
+                <td><a href="{% url 'update_record' record.id %}" class="btn btn-primary">Update</a></td>
+                
+                <td>
+                    <form method="POST" action="{% url 'delete_record' record.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- DataTables Integration -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#chatTable').DataTable({
+                "pageLength": 5,  // Number of rows per page
+                "lengthMenu": [5, 10, 25, 50],  // Options for rows per page
+                "order": [[3, "desc"]],  // Order by the 'Date Uploaded' column (desc)
+                "columnDefs": [
+                    { "width": "15%", "targets": 0 },  // Adjust column widths
+                    { "width": "25%", "targets": 1 },
+                    { "width": "20%", "targets": 2 },
+                    { "width": "15%", "targets": 3 },
+                    { "width": "10%", "targets": 4 },  // Adjust width for View button
+                    { "width": "10%", "targets": 5 },  // Adjust width for Update button
+                    { "width": "10%", "targets": 6 },  // Adjust width for Delete button
+                ]
+            });
+        });
+    </script>
+
+    
+    {% else %}
+    <p>No records available.</p>
+    {% endif %}
+
+    {% else %}
+    <h1>Login</h1>
+    <br/>
+    <form method="POST" action="{% url 'home' %}">
+        {% csrf_token %}
+        <div class="mb-3">
+            <input type="text" class="form-control" name="username" placeholder="Username" required>
+        </div><br/>
+        <div class="mb-3">
+            <input type="password" class="form-control" name="password" placeholder="Password" required>
+        </div>
+        <br/>
+        <button type="submit" class="btn btn-secondary">Login</button>
+    </form>
+
+    {% endif %}
+</div>
+{% endblock %}

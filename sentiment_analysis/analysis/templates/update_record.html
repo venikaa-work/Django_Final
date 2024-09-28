@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="col-md-8 offset-md-2">
+    <h1>Update Chat Record</h1>
+    
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}  <!-- Render form fields as paragraphs -->
+        <button type="submit" class="btn btn-primary">Update Record</button>
+    </form>
+    
+    <br>
+    <a href="{% url 'home' %}">Back to Home</a>
+</div>
+{% endblock %}
